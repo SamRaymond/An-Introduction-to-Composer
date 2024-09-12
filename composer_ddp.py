@@ -79,3 +79,5 @@ trainer = Trainer(
     max_duration=10,  # epochs
     device='gpu'
 )
+
+trainer.fit()

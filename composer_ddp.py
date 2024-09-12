@@ -65,9 +65,9 @@ if dist.get_local_rank() == 0:
     # Create distributed samplers
     train_sampler = dist.get_sampler(trainset, shuffle=True)
     test_sampler = dist.get_sampler(testset, shuffle=True)
-    # Create data loaders
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sampler)
+# Create data loaders
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler)
+testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sampler)
 
 # Define the model, loss function, and optimizer
 model = ComposerCNN()

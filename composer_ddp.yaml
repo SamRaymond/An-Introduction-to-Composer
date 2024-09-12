@@ -1,0 +1,13 @@
+name: my-composer-mct-run
+image: mosaicml/pytorch:lateset
+compute:
+ gpus: 16 # Number of GPUs to use
+ cluster: r14z3p1 # Insert cluster name
+ gpu_type: h100_80gb # Type of GPU to use. We use a100_80gb in our experiments
+integrations:
+ - integration_type: "git_repo"
+   git_repo: SamRaymond/composer_test
+   git_branch: main
+command: |-
+    cd composer_test/
+    composer composer_ddp.py --gpus 16 

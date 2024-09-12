@@ -47,7 +47,7 @@ class ComposerCNN(ComposerModel):
 torch.manual_seed(42)
 
 # Initialize the distributed backend
-composer.utils.dist.initialize_dist()
+dist.initialize_dist()
 
 # Define transforms
 transform = transforms.Compose([

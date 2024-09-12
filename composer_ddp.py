@@ -63,7 +63,10 @@ if dist.get_local_rank() == 0:
     testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 else: 
     dist.barrier()
-
+    
+if dist.get_local_rank() == 0:
+    dist.barrier()
+    
 # Create distributed samplers
 train_sampler = dist.get_sampler(trainset, shuffle=True)
 test_sampler = dist.get_sampler(testset, shuffle=True)

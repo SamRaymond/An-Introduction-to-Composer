@@ -1,13 +1,12 @@
-import torch, os
+import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
-import numpy as np
+import torch.nn.functional as F
 from composer import Trainer
 from composer.models import ComposerModel
-import torch.nn.functional as F
-from composer.utils import dist
+from torch.utils.data.distributed import DistributedSampler
 
 # Define the CNN model
 class CIFAR10CNN(nn.Module):
@@ -41,7 +40,7 @@ class ComposerCNN(ComposerModel):
 
     def loss(self, outputs, batch):
         _, targets = batch
-        return F.cross_entropy(outputs, targets) #<-- we add the loss as a functional rather than a class
+        return F.cross_entropy(outputs, targets)
 
 # Set random seed for reproducibility
 torch.manual_seed(42)
@@ -58,13 +57,13 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
-if dist.get_local_rank() == 0:
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-        
-    # Create distributed samplers
-    train_sampler = dist.get_sampler(trainset, shuffle=True)
-    test_sampler = dist.get_sampler(testset, shuffle=True)
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+
+# Create distributed samplers
+train_sampler = DistributedSampler(trainset, shuffle=True)
+test_sampler = DistributedSampler(testset, shuffle=False)
+
 # Create data loaders
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler)
 testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sampler)
@@ -74,13 +73,12 @@ model = ComposerCNN()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 num_epochs = 10
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+# Create the trainer
 trainer = Trainer(
     model=model,
     train_dataloader=trainloader,
     optimizers=optimizer,
-    max_duration=10,  # epochs
+    max_duration=num_epochs,  # epochs
     device='gpu'
 )
 

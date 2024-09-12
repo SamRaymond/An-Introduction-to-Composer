@@ -6,7 +6,7 @@ import torchvision.transforms as transforms
 import torch.nn.functional as F
 from composer import Trainer
 from composer.models import ComposerModel
-from composer.util import dist
+from composer.utils import dist
 from torch.utils.data.distributed import DistributedSampler
 
 # Define the CNN model

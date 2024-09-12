@@ -46,6 +46,9 @@ class ComposerCNN(ComposerModel):
 # Set random seed for reproducibility
 torch.manual_seed(42)
 
+# Initialize the distributed backend
+composer.utils.dist.initialize_dist()
+
 # Define transforms
 transform = transforms.Compose([
     transforms.RandomHorizontalFlip(),

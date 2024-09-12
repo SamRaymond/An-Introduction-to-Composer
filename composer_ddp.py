@@ -60,8 +60,8 @@ transform = transforms.Compose([
 if dist.get_local_node() == 0:
     trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=True, transform=transform)
     testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=True, transform=transform)
-    dist.barrier()
-else: 
+dist.barrier()
+if dist.get_local_node() != 0:
     trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=False, transform=transform)
     testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=False, transform=transform)
 

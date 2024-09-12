@@ -55,8 +55,11 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+if dist.get_local_rank() == 0:
+    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+else: 
+    dist.barrier()
 
 # Create distributed samplers
 train_sampler = dist.get_sampler(trainset, shuffle=True)

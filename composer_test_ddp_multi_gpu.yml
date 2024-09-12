@@ -1,0 +1,41 @@
+name: my-composer-mct-run
+image: mosaicml/composer:latest
+compute:
+ gpus: 8 # Number of GPUs to use
+ cluster: r14z3p1 # Insert cluster name
+ gpu_type: h100_80gb # Type of GPU to use. We use a100_80gb in our experiments
+integrations:
+ - integration_type: "git_repo"
+   git_repo: SamRaymond/composer_test
+   git_branch: main
+command: |-
+  cd composer_test/
+  mkdir -p /tmp/dataset/
+  mkdir -p /tmp/dataset/train/
+  mkdir -p /tmp/dataset/test/
+  chmod -R 777 /tmp/dataset/test/ /tmp/dataset/train/
+  pip install -Uq torchvision transformers
+  # composer -n 1 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  # composer -n 2 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  # composer -n 4 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  composer -n 8 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+
+# single node 1 GPU run with DDP
+# mcli run -f composer_test_ddp_multi_gpu.yml 
+# composer -n 1 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# Epoch   9:  100%|█████████████████████████| 1563/1563 [00:15<00:00, 98.30ba/s, loss/train/total=0.2483]  
+
+# single node 2 GPU run with DDP
+# mcli run -f composer_test_ddp_multi_gpu.yml 
+# composer -n 2 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# Epoch   9:  100%|█████████████████████████| 782/782 [00:08<00:00, 88.27ba/s, loss/train/total=0.2226] 
+
+# single node 4 GPU run with DDP
+# mcli run -f composer_test_ddp_multi_gpu.yml 
+# composer -n 4 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# Epoch   9:  100%|█████████████████████████| 391/391 [00:05<00:00, 73.42ba/s, loss/train/total=0.5791]
+
+# single node 8 GPU run with DDP
+# mcli run -f composer_test_ddp_multi_gpu.yml 
+# composer -n 8 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# Epoch   9:  100%|█████████████████████████| 196/196 [00:03<00:00, 51.29ba/s, loss/train/total=0.6192] 

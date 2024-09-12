@@ -15,27 +15,27 @@ command: |-
   mkdir -p /tmp/dataset/test/
   chmod -R 777 /tmp/dataset/test/ /tmp/dataset/train/
   pip install -Uq torchvision transformers
-  # composer -n 1 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
-  # composer -n 2 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
-  # composer -n 4 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
-  composer -n 8 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  # composer -n 1 composer_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  # composer -n 2 composer_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  # composer -n 4 composer_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  composer -n 8 composer_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
 
 # single node 1 GPU run with DDP
 # mcli run -f composer_test_ddp_multi_gpu.yml 
-# composer -n 1 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# composer -n 1 composer_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
 # Epoch   9:  100%|█████████████████████████| 1563/1563 [00:15<00:00, 98.30ba/s, loss/train/total=0.2483]  
 
 # single node 2 GPU run with DDP
 # mcli run -f composer_test_ddp_multi_gpu.yml 
-# composer -n 2 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# composer -n 2 composer_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
 # Epoch   9:  100%|█████████████████████████| 782/782 [00:08<00:00, 88.27ba/s, loss/train/total=0.2226] 
 
 # single node 4 GPU run with DDP
 # mcli run -f composer_test_ddp_multi_gpu.yml 
-# composer -n 4 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# composer -n 4 composer_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
 # Epoch   9:  100%|█████████████████████████| 391/391 [00:05<00:00, 73.42ba/s, loss/train/total=0.5791]
 
 # single node 8 GPU run with DDP
 # mcli run -f composer_test_ddp_multi_gpu.yml 
-# composer -n 8 composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# composer -n 8 composer_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
 # Epoch   9:  100%|█████████████████████████| 196/196 [00:03<00:00, 51.29ba/s, loss/train/total=0.6192] 

@@ -9,7 +9,6 @@ from composer.models import ComposerModel
 import torch.nn.functional as F
 from composer.utils import dist
 
-
 # Define the CNN model
 class CIFAR10CNN(nn.Module):
     def __init__(self):
@@ -80,5 +79,3 @@ trainer = Trainer(
     max_duration=10,  # epochs
     device='gpu'
 )
-
-trainer.fit()

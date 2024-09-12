@@ -58,7 +58,7 @@ transform = transforms.Compose([
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-
+dist.barrier()
 # Create distributed samplers
 train_sampler = dist.get_sampler(trainset, shuffle=True)
 test_sampler = dist.get_sampler(testset, shuffle=True)

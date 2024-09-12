@@ -1,13 +1,13 @@
-import torch
+import torch, os
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
-import torch.nn.functional as F
+import numpy as np
 from composer import Trainer
 from composer.models import ComposerModel
+import torch.nn.functional as F
 from composer.utils import dist
-from torch.utils.data.distributed import DistributedSampler
 
 # Define the CNN model
 class CIFAR10CNN(nn.Module):
@@ -41,13 +41,10 @@ class ComposerCNN(ComposerModel):
 
     def loss(self, outputs, batch):
         _, targets = batch
-        return F.cross_entropy(outputs, targets)
+        return F.cross_entropy(outputs, targets) #<-- we add the loss as a functional rather than a class
 
 # Set random seed for reproducibility
 torch.manual_seed(42)
-
-# Initialize the distributed backend
-dist.initialize_dist('gpu')
 
 # Define transforms
 transform = transforms.Compose([
@@ -58,12 +55,13 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
+
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 
 # Create distributed samplers
-train_sampler = DistributedSampler(trainset, shuffle=True)
-test_sampler = DistributedSampler(testset, shuffle=False)
+train_sampler = dist.get_sampler(trainset, shuffle=True)
+test_sampler = dist.get_sampler(testset, shuffle=True)
 
 # Create data loaders
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler)
@@ -74,12 +72,13 @@ model = ComposerCNN()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 num_epochs = 10
 
-# Create the trainer
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 trainer = Trainer(
     model=model,
     train_dataloader=trainloader,
     optimizers=optimizer,
-    max_duration=num_epochs,  # epochs
+    max_duration=10,  # epochs
     device='gpu'
 )
 

@@ -1,0 +1,27 @@
+name: my-composer-mct-run
+image: mosaicml/composer:0.24.0
+compute:
+ gpus: 32 # Number of GPUs to use
+ cluster: r14z3p1 # Insert cluster name
+ gpu_type: h100_80gb # Type of GPU to use. We use a100_80gb in our experiments
+integrations:
+ - integration_type: "git_repo"
+   git_repo: SamRaymond/composer_test
+   git_branch: main
+command: |-
+  cd composer_test/
+  mkdir -p /tmp/my_data/
+  chmod -R 777 /tmp/my_data/
+  composer composer_ddp_multi_node.py || (echo "Command failed - killing python" && pkill python && exit 1)
+
+# two node 2x8 GPU run with DDP
+# mcli run -f composer_test_ddp_multi_node.yml 
+# gps: 16
+# composer composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# Epoch   9:  100%|█████████████████████████| 98/98 [00:02<00:00, 39.69ba/s, loss/train/total=0.9473] 
+
+# four node 4x8 GPU run with DDP
+# mcli run -f composer_test_ddp_multi_node.yml 
+# gps: 32
+# composer composer_ddp.py || (echo "Command failed - killing python" && pkill python && exit 1)
+# Epoch   9:  100%|█████████████████████████| 49/49 [00:01<00:00, 36.33ba/s, loss/train/total=1.1046] 

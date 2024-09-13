@@ -100,7 +100,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sa
 # model = ComposerCNN()
 # optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-model = PTL_CNN()
+model = PTL_CNN(CIFAR10CNN())
 num_epochs = 10
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

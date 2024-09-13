@@ -1,7 +1,7 @@
 name: my-composer-mct-run
 image: mosaicml/composer:latest
 compute:
- gpus: 16 # Number of GPUs to use
+ gpus: 8 # Number of GPUs to use
  cluster: r14z3p1 # Insert cluster name
  gpu_type: h100_80gb # Type of GPU to use. We use a100_80gb in our experiments
 integrations:
@@ -15,11 +15,4 @@ command: |-
   mkdir -p /tmp/dataset/test/
   chmod -R 777 /tmp/dataset/test/ /tmp/dataset/train/
   pip install -Uq torchvision transformers lightning
-  torchrun \
-    --nproc_per_node=8 \
-    --nnodes=2 \
-    --node_rank $NODE_RANK \
-    --master_addr $MASTER_ADDR \
-    --master_port $MASTER_PORT \
-    ptl_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
-  
+  python ptl_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)

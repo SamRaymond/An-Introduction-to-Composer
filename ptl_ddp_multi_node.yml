@@ -30,3 +30,4 @@ command: |-
     --master_addr $MASTER_ADDR \
     --master_port $MASTER_PORT \
     ptl_ddp_multi_node.py || (echo "Command failed - killing python" && pkill python && exit 1)
+    

@@ -4,13 +4,12 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 import numpy as np
-import torch.distributed as dist
 # from composer import Trainer
 # from composer.models import ComposerModel
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
-# from composer.utils import dist
+from composer.utils import dist
 import lightning as L
 
 # Define the CNN model
@@ -77,9 +76,14 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
+if dist.get_local_rank() == 0:
+   trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=True, transform=transform)
+   testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=True, transform=transform)
+dist.barrier()
 
-trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=True, transform=transform)
-testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=True, transform=transform)
+if not dist.get_local_rank() == 0:
+    trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=False, transform=transform)
+    testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=False, transform=transform)
 
 
 # Create distributed samplers
@@ -100,12 +104,11 @@ num_epochs = 10
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 trainer = L.Trainer(
-    model=model,
     max_epochs=num_epochs,
-    train_dataloader=trainloader,
-    devices=16,
+    devices=8,
     accelerator="gpu",
     )
+trainer.fit(model=model, train_dataloaders=trainloader)
 
 # trainer = Trainer(
 #     model=model,
@@ -115,4 +118,4 @@ trainer = L.Trainer(
 #     device='gpu'
 # )
 
-trainer.fit()
+# trainer.fit()

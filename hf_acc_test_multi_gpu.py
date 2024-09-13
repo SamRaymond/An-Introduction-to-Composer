@@ -64,10 +64,13 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
-
-trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=True, transform=transform)
-testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=True, transform=transform)
-
+if accelerator.is_main_process():
+    trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=True, transform=transform)
+    testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=True, transform=transform)
+accelerator.wait_for_everyone()
+if not accelerator.is_main_process():
+    trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=False, transform=transform)
+    testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=False, transform=transform)
 
 # Create distributed samplers
 train_sampler = DistributedSampler(trainset, shuffle=True)

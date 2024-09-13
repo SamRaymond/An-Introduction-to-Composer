@@ -4,6 +4,7 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 import numpy as np
+import torch.distributed as dist
 # from composer import Trainer
 # from composer.models import ComposerModel
 import torch.nn.functional as F
@@ -62,6 +63,9 @@ class PTL_CNN(L.LightningModule):
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=1e-3)
         return optimizer
+    
+dist.init_process_group("nccl", rank=os.environ["LOCAL_RANK"], world_size=os.environ["WORLD_SIZE"])
+
 # Set random seed for reproducibility
 torch.manual_seed(42)
 

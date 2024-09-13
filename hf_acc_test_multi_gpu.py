@@ -84,7 +84,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sa
 # model = ComposerCNN()
 model = CIFAR10CNN()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
-loss = nn.CrossEntropyLoss()
+loss_function = nn.CrossEntropyLoss()
 num_epochs = 10
 
 model, optimizer, trainloader= accelerator.prepare(

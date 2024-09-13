@@ -106,13 +106,11 @@ num_epochs = 10
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 trainer = L.Trainer(
-    model=model,
     max_epochs=num_epochs,
-    train_dataloader=trainloader,
     devices=16,
     accelerator="gpu",
     )
-
+trainer.fit(model=model, train_dataloader=trainloader)
 # trainer = Trainer(
 #     model=model,
 #     train_dataloader=trainloader,
@@ -120,5 +118,4 @@ trainer = L.Trainer(
 #     max_duration=10,  # epochs
 #     device='gpu'
 # )
-
-trainer.fit()
+# trainer.fit()

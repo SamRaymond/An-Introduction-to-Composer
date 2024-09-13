@@ -105,7 +105,7 @@ for epoch in range(num_epochs):
     total_loss = 0.0
     num_batches = len(trainloader)
     
-    with tqdm(trainloader, desc=f"Epoch {epoch+1}/{num_epochs}", unit="batch") as tepoch:
+    with tqdm(trainloader, desc=f"Epoch {epoch+1}/{num_epochs}", unit="batch",disable=not accelerator.is_main_process) as tepoch:
         for batch in tepoch:
             optimizer.zero_grad()
             # Move batch to the correct device
@@ -122,6 +122,5 @@ for epoch in range(num_epochs):
     
     # Print epoch summary
     avg_loss = total_loss / num_batches
-    if accelerator.is_main_process:
-        print(f"Epoch {epoch+1}/{num_epochs}, Average Loss: {avg_loss:.4f}")
+    print(f"Epoch {epoch+1}/{num_epochs}, Average Loss: {avg_loss:.4f}")
   

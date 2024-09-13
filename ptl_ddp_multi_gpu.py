@@ -4,12 +4,13 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 import numpy as np
+from composer.utils import dist
 # from composer import Trainer
 # from composer.models import ComposerModel
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
-from composer.utils import dist
+# from composer.utils import dist
 import lightning as L
 
 # Define the CNN model
@@ -65,7 +66,6 @@ class PTL_CNN(L.LightningModule):
 
 dist.initialize_dist('gpu')
 
-
 # Set random seed for reproducibility
 torch.manual_seed(42)
 
@@ -93,21 +93,22 @@ train_sampler = DistributedSampler(trainset, shuffle=True)
 test_sampler = DistributedSampler(testset, shuffle=True)
 
 # Create data loaders
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler)
-testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sampler)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler, num_workers=8)
+testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sampler,num_workers=8)
 
 # Define the model, loss function, and optimizer
 # model = ComposerCNN()
 # optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-model = PTL_CNN()
+model = PTL_CNN(CIFAR10CNN())
 num_epochs = 10
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 trainer = L.Trainer(
     max_epochs=num_epochs,
-    devices=8,
+    devices=8, #how many GPUs to use per node
+    num_nodes=1,
     accelerator="gpu",
     )
 trainer.fit(model=model, train_dataloaders=trainloader)
@@ -119,5 +120,4 @@ trainer.fit(model=model, train_dataloaders=trainloader)
 #     max_duration=10,  # epochs
 #     device='gpu'
 # )
-
 # trainer.fit()

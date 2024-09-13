@@ -104,7 +104,7 @@ model.train()
 for epoch in range(num_epochs):
     total_loss = 0.0
     num_batches = len(trainloader)
-    
+
     with tqdm(trainloader, desc=f"Epoch {epoch+1}/{num_epochs}", unit="batch",disable=not accelerator.is_main_process) as tepoch:
         for batch in tepoch:
             optimizer.zero_grad()
@@ -121,6 +121,7 @@ for epoch in range(num_epochs):
             tepoch.set_postfix(loss=loss.item())
     
     # Print epoch summary
-    avg_loss = total_loss / num_batches
-    print(f"Epoch {epoch+1}/{num_epochs}, Average Loss: {avg_loss:.4f}")
+    if accelerator.is_main_process:
+        avg_loss = total_loss / num_batches
+        print(f"Epoch {epoch+1}/{num_epochs}, Average Loss: {avg_loss:.4f}")
   

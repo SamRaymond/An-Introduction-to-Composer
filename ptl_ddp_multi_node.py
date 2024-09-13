@@ -110,7 +110,8 @@ trainer = L.Trainer(
     devices=8, #how many GPUs to use per node
     accelerator="gpu",
     )
-trainer.fit(model=model, train_dataloader=trainloader)
+trainer.fit(model=model, train_dataloaders=trainloader)
+
 # trainer = Trainer(
 #     model=model,
 #     train_dataloader=trainloader,

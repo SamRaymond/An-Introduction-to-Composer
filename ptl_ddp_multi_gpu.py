@@ -107,7 +107,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 trainer = L.Trainer(
     max_epochs=num_epochs,
-    devices=8, #how many GPUs to use per node
+    devices=4, #how many GPUs to use per node
     num_nodes=1,
     accelerator="gpu",
     )

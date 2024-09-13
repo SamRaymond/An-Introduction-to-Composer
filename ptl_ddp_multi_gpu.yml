@@ -19,7 +19,7 @@ command: |-
     --nproc_per_node=8 \
     --nnodes=1 \
     ptl_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
-
-    # --node_rank $NODE_RANK \
-    # --master_addr $MASTER_ADDR \
-    # --master_port $MASTER_PORT \
+  # devices = 8 
+  # Epoch 9: 100%|██████████| 196/196 [00:02<00:00, 87.67it/s, v_num=0]
+  # devices = 4
+  #

@@ -9,6 +9,8 @@ from tqdm import tqdm
 # from composer.models import ComposerModel
 import torch.nn.functional as F
 # from composer.utils import dist
+from torch.utils.data import DataLoader
+from torch.utils.data.distributed import DistributedSampler
 from accelerate import Accelerator
 
 # Define the CNN model
@@ -68,8 +70,8 @@ testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, downloa
 
 
 # Create distributed samplers
-train_sampler = dist.get_sampler(trainset, shuffle=True)
-test_sampler = dist.get_sampler(testset, shuffle=True)
+train_sampler = DistributedSampler(trainset, shuffle=True)
+test_sampler = DistributedSampler(testset, shuffle=True)
 
 # Create data loaders
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler)

@@ -4,7 +4,7 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 import numpy as np
-import torch.distributed as dist
+from composer.utils import dist
 # from composer import Trainer
 # from composer.models import ComposerModel
 import torch.nn.functional as F
@@ -77,9 +77,14 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
+if dist.get_local_rank() == 0:
+   trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=True, transform=transform)
+   testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=True, transform=transform)
+dist.barrier()
 
-trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=True, transform=transform)
-testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=True, transform=transform)
+if not dist.get_local_rank() == 0:
+    trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=False, transform=transform)
+    testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=False, transform=transform)
 
 
 # Create distributed samplers

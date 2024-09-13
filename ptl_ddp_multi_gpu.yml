@@ -1,0 +1,18 @@
+name: my-composer-mct-run
+image: mosaicml/composer:latest
+compute:
+ gpus: 8 # Number of GPUs to use
+ cluster: r14z3p1 # Insert cluster name
+ gpu_type: h100_80gb # Type of GPU to use. We use a100_80gb in our experiments
+integrations:
+ - integration_type: "git_repo"
+   git_repo: SamRaymond/composer_test
+   git_branch: main
+command: |-
+  cd composer_test/
+  mkdir -p /tmp/dataset/
+  mkdir -p /tmp/dataset/train/
+  mkdir -p /tmp/dataset/test/
+  chmod -R 777 /tmp/dataset/test/ /tmp/dataset/train/
+  pip install -Uq torchvision transformers lightning
+  python ptl_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)

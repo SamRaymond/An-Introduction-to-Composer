@@ -1,7 +1,7 @@
-name: my-composer-mct-run
+name: ptl-mct-multi-node
 image: mosaicml/composer:latest
 compute:
- gpus: 16 # Number of GPUs to use
+ gpus: 32 # Number of GPUs to use
  cluster: r14z3p1 # Insert cluster name
  gpu_type: h100_80gb # Type of GPU to use. We use a100_80gb in our experiments
 integrations:
@@ -30,4 +30,5 @@ command: |-
     --master_addr $MASTER_ADDR \
     --master_port $MASTER_PORT \
     ptl_ddp_multi_node.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  # Epoch 9: 100%|██████████| 49/49 [00:00<00:00, 51.58it/s, v_num=0]
     

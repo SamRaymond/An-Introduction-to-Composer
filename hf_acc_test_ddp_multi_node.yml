@@ -1,4 +1,4 @@
-name: my-hf-acc-mct-run
+name: hf-acc-mct-multi-node
 image: mosaicml/composer:latest
 compute:
  gpus: 32 # Number of GPUs to use

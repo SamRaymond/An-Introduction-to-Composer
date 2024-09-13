@@ -64,7 +64,7 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
-if accelerator.is_main_process():
+if accelerator.is_main_process:
     trainset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=True, download=True, transform=transform)
     testset = torchvision.datasets.CIFAR10(root='/tmp/my_data', train=False, download=True, transform=transform)
 accelerator.wait_for_everyone()

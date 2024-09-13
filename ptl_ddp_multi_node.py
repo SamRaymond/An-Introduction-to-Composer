@@ -93,8 +93,8 @@ train_sampler = DistributedSampler(trainset, shuffle=True)
 test_sampler = DistributedSampler(testset, shuffle=True)
 
 # Create data loaders
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler)
-testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sampler)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, sampler=train_sampler, num_workers=8)
+testloader = torch.utils.data.DataLoader(testset, batch_size=32, sampler=test_sampler,num_workers=8)
 
 # Define the model, loss function, and optimizer
 # model = ComposerCNN()

@@ -64,6 +64,7 @@ class PTL_CNN(L.LightningModule):
         optimizer = optim.Adam(self.parameters(), lr=1e-3)
         return optimizer
 
+dist.initialize_dist('gpu')
 
 # Set random seed for reproducibility
 torch.manual_seed(42)

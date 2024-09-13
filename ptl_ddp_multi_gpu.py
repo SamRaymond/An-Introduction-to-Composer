@@ -64,7 +64,7 @@ class PTL_CNN(L.LightningModule):
         optimizer = optim.Adam(self.parameters(), lr=1e-3)
         return optimizer
     
-dist.init_process_group("nccl", rank=os.environ["NODE_RANK"], world_size=os.environ["WORLD_SIZE"])
+dist.init_process_group("nccl", rank=int(os.environ["NODE_RANK"]), world_size=int(os.environ["WORLD_SIZE"]))
 
 # Set random seed for reproducibility
 torch.manual_seed(42)

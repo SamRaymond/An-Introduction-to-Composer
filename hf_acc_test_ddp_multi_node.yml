@@ -1,7 +1,7 @@
 name: my-hf-acc-mct-run
 image: mosaicml/composer:latest
 compute:
- gpus: 16 # Number of GPUs to use
+ gpus: 32 # Number of GPUs to use
  cluster: r14z3p1 # Insert cluster name
  gpu_type: h100_80gb # Type of GPU to use. We use a100_80gb in our experiments
 integrations:
@@ -15,10 +15,22 @@ command: |-
   mkdir -p /tmp/dataset/test/
   chmod -R 777 /tmp/dataset/test/ /tmp/dataset/train/
   pip install -Uq torchvision transformers tqdm accelerate
-    accelerate launch \
+  #   accelerate launch \
+  # --machine_rank $NODE_RANK \
+  # --main_process_ip $MASTER_ADDR \
+  # --main_process_port $MASTER_PORT \
+  # --num_machines 2 \
+  # --num_processes 16 \
+  # hf_acc_test_multi_node.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  # Epoch 10/10: 100%|██████████| 7/7 [00:00<00:00, 62.70batch/s, loss=1.69]
+  # Epoch 10/10, Average Loss: 1.6640
+  
+   accelerate launch \
   --machine_rank $NODE_RANK \
   --main_process_ip $MASTER_ADDR \
   --main_process_port $MASTER_PORT \
-  --num_machines 2 \
-  --num_processes 16 \
+  --num_machines 4 \
+  --num_processes 32 \
   hf_acc_test_multi_node.py || (echo "Command failed - killing python" && pkill python && exit 1)
+  # Epoch 10/10: 100%|██████████| 2/2 [00:00<00:00, 50.11batch/s, loss=2.2]
+  # Epoch 10/10, Average Loss: 2.0521

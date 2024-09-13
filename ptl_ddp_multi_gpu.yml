@@ -15,4 +15,10 @@ command: |-
   mkdir -p /tmp/dataset/test/
   chmod -R 777 /tmp/dataset/test/ /tmp/dataset/train/
   pip install -Uq torchvision transformers lightning
-  python ptl_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)
+      torchrun \
+    --nproc_per_node=8 \
+    --nnodes=1 \
+    # --node_rank $NODE_RANK \
+    # --master_addr $MASTER_ADDR \
+    # --master_port $MASTER_PORT \
+      ptl_ddp_multi_gpu.py || (echo "Command failed - killing python" && pkill python && exit 1)

@@ -122,5 +122,6 @@ for epoch in range(num_epochs):
     
     # Print epoch summary
     avg_loss = total_loss / num_batches
-    print(f"Epoch {epoch+1}/{num_epochs}, Average Loss: {avg_loss:.4f}")
+    if accelerator.is_main_process:
+        print(f"Epoch {epoch+1}/{num_epochs}, Average Loss: {avg_loss:.4f}")
   
